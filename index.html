@@ -1,0 +1,48 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Калькулятор сметы</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f4f5f7;color:#1d1f23}
+.w{max-width:900px;margin:0 auto;padding:20px}h1{margin:.2em 0;font-size:26px}.sub{color:#666;margin-bottom:16px}
+.card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 10px #0001;margin-bottom:16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.tabs button{border:1px solid #ddd;background:#fff;padding:9px 14px;border-radius:10px;cursor:pointer;font-size:14px}
+.tabs button.on{background:#ff6a00;color:#fff;border-color:#ff6a00}
+label.f{display:block;font-size:13px;color:#666;margin:8px 0 4px}input[type=text],input[type=number],input[type=date]{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:15px}
+.row2{display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px}@media(max-width:640px){.row2{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse}td,th{padding:8px 6px;border-bottom:1px solid #eee;text-align:left;font-size:14px}th{color:#666;font-weight:600}
+td.n,th.n{text-align:right;white-space:nowrap}td input[type=number]{width:80px;padding:6px}tr.off td{color:#aaa}
+.tot{display:flex;justify-content:space-between;font-size:16px;padding:6px 0}.tot.big{font-size:22px;font-weight:700;color:#ff6a00}
+.btn{background:#1d1f23;color:#fff;border:0;padding:13px 20px;border-radius:10px;font-size:16px;cursor:pointer;width:100%}
+</style></head><body><div class="w">
+<h1>Калькулятор сметы</h1><div class="sub">Меняйте ставку, часы и состав работ — расчёт обновляется сразу.</div>
+<div class="card"><div class="tabs" id="tabs"></div>
+<label class="f">Проект</label><input type="text" id="proj">
+<div class="row2"><div><label class="f">Заказчик</label><input type="text" id="client"></div>
+<div><label class="f">Дата</label><input type="date" id="date"></div>
+<div><label class="f">Ставка за час, ₽</label><input type="number" id="rate" min="0" step="100"></div></div>
+<label class="f">Налог, %</label><input type="number" id="tax" min="0" step="0.5" style="max-width:120px"></div>
+<div class="card"><table><thead><tr><th></th><th>Состав работ</th><th class="n">Часы</th><th class="n">Стоимость, ₽</th></tr></thead><tbody id="tb"></tbody></table></div>
+<div class="card"><div class="tot"><span>Часов всего</span><b id="th"></b></div>
+<div class="tot"><span>Предварительная стоимость</span><b id="ts"></b></div>
+<div class="tot"><span>Налог <span id="tl"></span></span><b id="tt"></b></div>
+<div class="tot big"><span>Итого</span><span id="ti"></span></div><br>
+<button class="btn" id="dl">Скачать .txt</button></div></div>
+<script>
+const D="Дизайн одностраничного сайта для компании по продаже жалюзи",R="Разработка одностраничного сайта для компании по продаже жалюзи";
+const P=[
+{n:"Дизайн — вариант 1",p:D,c:"Мои Жалюзи",d:"2025-06-19",i:[["Интервью",1],["Описание ЦА",1],["Составление структуры",2],["Анализ конкурентов",3],["Составление мудборда",2],["Протипирование",17],["Интерактивный прототип",0],["Внесение правок",2],["Дизайн проект",16],["UI kit",5],["Проверка верстки",2]]},
+{n:"Дизайн — вариант 2",p:D,c:"Мои Жалюзи",d:"2025-06-19",i:[["Интервью",1],["Описание ЦА",1],["Составление структуры",2],["Анализ конкурентов",3],["Составление мудборда",2],["Протипирование",17],["Интерактивный прототип",9],["Внесение правок",2],["Дизайн проект",14],["Анимация",18],["UI kit",5],["Проверка верстки",2]]},
+{n:"Разработка — вариант 1",p:R,c:"",d:"2026-10-28",i:[["Верстка",28],["Адаптив под различные устройства",14],["Интеграция API",14],["Настройка SEO",10],["Настройка кроссбраузерности",5],["Оптимизация производительности",5]]},
+{n:"Разработка — вариант 2",p:R,c:"",d:"2026-10-28",i:[["Верстка",28],["Адаптив под различные устройства",14],["Интеграция API",14],["Настройка SEO",10],["Настройка кроссбраузерности",5],["Оптимизация производительности",5],["Анимация",13]]}];
+const $=id=>document.getElementById(id),f=x=>Math.round(x*100)/100,m=x=>f(x).toLocaleString("ru-RU")+" ₽";let items=[];
+function load(k){const p=P[k];[...$("tabs").children].forEach((b,j)=>b.classList.toggle("on",j==k));$("proj").value=p.p;$("client").value=p.c;$("date").value=p.d;$("rate").value=2500;$("tax").value=6;
+items=p.i.map(([n,h])=>({n,h,on:true}));$("tb").innerHTML=items.map((it,j)=>`<tr id="r${j}"><td><input type="checkbox" checked data-j="${j}"></td><td>${it.n}</td><td class="n"><input type="number" min="0" step="0.5" value="${it.h}" data-j="${j}"></td><td class="n" id="s${j}"></td></tr>`).join("");
+$("tb").querySelectorAll("input").forEach(e=>e.oninput=()=>{const it=items[e.dataset.j];if(e.type=="checkbox")it.on=e.checked;else it.h=+e.value||0;calc()});calc()}
+function calc(){const r=+$("rate").value||0,t=+$("tax").value||0;let H=0,S=0;items.forEach((it,j)=>{const s=it.on?it.h*r:0;$("s"+j).textContent=m(s);$("r"+j).classList.toggle("off",!it.on);if(it.on){H+=it.h;S+=s}});
+const T=S*t/100;$("th").textContent=f(H);$("ts").textContent=m(S);$("tl").textContent=t+"%";$("tt").textContent=m(T);$("ti").textContent=m(S+T);return{r,t,H,S,T}}
+P.forEach((p,k)=>{const b=document.createElement("button");b.textContent=p.n;b.onclick=()=>load(k);$("tabs").appendChild(b)});["rate","tax"].forEach(i=>$(i).oninput=calc);
+$("dl").onclick=()=>{const c=calc(),L="-".repeat(60),pad=(a,n)=>a.length>n?a.slice(0,n):a+" ".repeat(n-a.length),dt=$("date").value.split("-").reverse().join(".");
+let s=`СМЕТА\n${L}\nПроект:   ${$("proj").value}\n`+($("client").value?`Заказчик: ${$("client").value}\n`:"")+`Дата:     ${dt}\nСтавка:   ${m(c.r)} / час\n${L}\n${pad("Состав работ",34)}${pad("Часы",8)}Стоимость\n${L}\n`;
+items.filter(i=>i.on).forEach((i,k)=>s+=pad((k+1)+". "+i.n,34)+pad(String(i.h),8)+m(i.h*c.r)+"\n");
+s+=`${L}\nЧасов всего:               ${f(c.H)}\nПредварительная стоимость: ${m(c.S)}\nНалог ${c.t}%:                  ${m(c.T)}\nИТОГО:                     ${m(c.S+c.T)}\n`;
+const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+s],{type:"text/plain;charset=utf-8"}));a.download="smeta-"+($("date").value||"")+".txt";a.click()};
+load(0);
+</script></body></html>
