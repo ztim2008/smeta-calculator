@@ -27,20 +27,11 @@ td.n,th.n{text-align:right;white-space:nowrap}td input[type=number]{width:80px;p
 <div class="tot"><span>Предварительная стоимость</span><b id="ts"></b></div>
 <div class="tot"><span>Налог <span id="tl"></span></span><b id="tt"></b></div>
 <div class="tot big"><span>Итого</span><span id="ti"></span></div><div style="color:#666;font-size:14px;margin-top:10px">В стоимость не входит: покупка домена, хостинг и подписка на Тильду.</div><br>
-<button class="btn" id="dl">Скачать .txt</button></div></div>
+<button class="btn" id="dl">Скачать .txt</button><button class="btn" id="kp" style="margin-top:10px;background:#1d1f23">Собрать КП →</button></div></div>
+<script src="data.js"></script>
 <script>
-const T="Создание одностраничного лендинга на Тильде для компании по продаже жалюзи",D="Дизайн одностраничного сайта для компании по продаже жалюзи",R="Вёрстка одностраничного сайта для компании по продаже жалюзи";
-const P=[
-{g:0,n:"Вариант 1 — Оптимально",p:D,c:"Мои Жалюзи",d:"2025-06-19",i:[["Интервью",1],["Описание ЦА",1],["Составление структуры",2],["Анализ конкурентов",3],["Составление мудборда",2],["Протипирование",17],["Интерактивный прототип",0],["Внесение правок",2],["Дизайн проект",16],["UI kit",5],["Проверка верстки",2]]},
-{g:0,n:"Вариант 2 — Максимально",p:D,c:"Мои Жалюзи",d:"2025-06-19",i:[["Интервью",1],["Описание ЦА",1],["Составление структуры",2],["Анализ конкурентов",3],["Составление мудборда",2],["Протипирование",17],["Интерактивный прототип",9],["Внесение правок",2],["Дизайн проект",14],["Анимация",18],["UI kit",5],["Проверка верстки",2]]},
-{g:1,n:"Вариант 1 — Оптимально",p:R,c:"",d:"2026-10-28",i:[["Верстка",28],["Адаптив под различные устройства",14],["Интеграция API",14],["Настройка SEO",10],["Настройка кроссбраузерности",5],["Оптимизация производительности",5]]},
-{g:1,n:"Вариант 2 — Максимально",p:R,c:"",d:"2026-10-28",i:[["Верстка",28],["Адаптив под различные устройства",14],["Интеграция API",14],["Настройка SEO",10],["Настройка кроссбраузерности",5],["Оптимизация производительности",5],["Анимация",13]]},
-{g:2,n:"Вариант 1 — Оптимально",p:T,c:"",d:"2026-10-28",i:[["Анализ и бриф",2],["Составление структуры",2],["Сборка стандартных блоков",8],["Zero Block первого экрана",6],["Адаптив под различные устройства",5],["Формы и заявки",2],["Подключение домена",1],["SEO-настройки",3],["Яндекс Метрика и цели",2],["Тестирование и запуск",2]]},
-{g:2,n:"Вариант 2 — Максимально",p:T,c:"",d:"2026-10-28",i:[["Анализ и бриф",2],["Составление структуры",2],["Сборка стандартных блоков",8],["Zero Block первого экрана",6],["Адаптив под различные устройства",5],["Формы и заявки",2],["Подключение домена",1],["SEO-настройки",3],["Яндекс Метрика и цели",2],["Тестирование и запуск",2],["Анимация Zero Block",6],["Каталог / приём оплат ЮKassa",5],["Интеграции CRM и Telegram",3],["Микроразметка",2]]}];
-const M="Настройка Яндекс Метрики и Яндекс Вебмастера",K="Согласие на cookie и политика конфиденциальности (152-ФЗ)";P.forEach(p=>{p.i=p.i.filter(x=>x[0]!="Яндекс Метрика и цели");p.i.push([M,2],[K,2])});
-const G=[["Дизайн","#7c3aed"],["Вёрстка","#2563eb"],["Тильда","#059669"]];let cg=0;
-const $=id=>document.getElementById(id),f=x=>Math.round(x*100)/100,m=x=>f(x).toLocaleString("ru-RU")+" ₽";let items=[],cv="";
-function load(k){const p=P[k];cv=p.n;cg=p.g;document.documentElement.style.setProperty("--a",G[cg][1]);[...$("big").children].forEach((b,j)=>b.classList.toggle("on",j==cg));$("tabs").innerHTML="";P.forEach((q,j)=>{if(q.g!=cg)return;const b=document.createElement("button");b.textContent=q.n;b.className=j==k?"on":"";b.onclick=()=>load(j);$("tabs").appendChild(b)});$("proj").value=p.p;$("client").value=p.c;$("date").value=p.d;$("rate").value=1500;$("tax").value=6;
+const $=id=>document.getElementById(id),f=x=>Math.round(x*100)/100,m=x=>f(x).toLocaleString("ru-RU")+" ₽";let items=[],cv="",cur=0;
+function load(k){const p=P[k];cur=k;cv=p.n;cg=p.g;document.documentElement.style.setProperty("--a",G[cg][1]);[...$("big").children].forEach((b,j)=>b.classList.toggle("on",j==cg));$("tabs").innerHTML="";P.forEach((q,j)=>{if(q.g!=cg)return;const b=document.createElement("button");b.textContent=q.n;b.className=j==k?"on":"";b.onclick=()=>load(j);$("tabs").appendChild(b)});$("proj").value=p.p;$("client").value=p.c;$("date").value=p.d;$("rate").value=1500;$("tax").value=6;
 items=p.i.map(([n,h])=>({n,h,on:true}));$("tb").innerHTML=items.map((it,j)=>`<tr id="r${j}"><td><input type="checkbox" checked data-j="${j}"></td><td>${it.n}</td><td class="n"><input type="number" min="0" step="0.5" value="${it.h}" data-j="${j}"></td><td class="n" id="s${j}"></td></tr>`).join("");
 $("tb").querySelectorAll("input").forEach(e=>e.oninput=()=>{const it=items[e.dataset.j];if(e.type=="checkbox")it.on=e.checked;else it.h=+e.value||0;calc()});calc()}
 function calc(){const r=+$("rate").value||0,t=+$("tax").value||0;let H=0,S=0;items.forEach((it,j)=>{const s=it.on?it.h*r:0;$("s"+j).textContent=m(s);$("r"+j).classList.toggle("off",!it.on);if(it.on){H+=it.h;S+=s}});
@@ -51,5 +42,6 @@ let s=`СМЕТА\n${L}\nПроект:   ${$("proj").value}\n`+($("client").valu
 items.filter(i=>i.on).forEach((i,k)=>{const t=(k+1)+". "+i.n;s+=(t.length>33?t+"\n"+" ".repeat(34):pad(t,34))+pad(String(i.h),8)+m(i.h*c.r)+"\n"});
 s+=`${L}\nЧасов всего:               ${f(c.H)}\nПредварительная стоимость: ${m(c.S)}\nНалог ${c.t}%:                  ${m(c.T)}\nИТОГО:                     ${m(c.S+c.T)}\n\nВ стоимость не входит: покупка домена, хостинг и подписка на Тильду.\n`;
 const a=document.createElement("a");a.href=URL.createObjectURL(new Blob(["\ufeff"+s],{type:"text/plain;charset=utf-8"}));a.download="smeta-"+($("date").value||"")+".txt";a.click()};
+$("kp").onclick=()=>{const c=calc();location.href=KP_URL+"#calc="+encState({g:cg,v:P[cur].n.startsWith("Вариант 2")?1:0,rate:c.r,tax:c.t,items:items,proj:$("proj").value,client:$("client").value})};
 load(0);
 </script></body></html>
